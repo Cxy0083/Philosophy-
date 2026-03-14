@@ -3,12 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>思想宇宙图谱</title>
+  <title>思想宇宙图谱 Philosophy Cosmos</title>
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
@@ -19,11 +17,26 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
         "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       background:
-        radial-gradient(circle at 20% 20%, rgba(90, 110, 255, 0.18), transparent 25%),
-        radial-gradient(circle at 80% 30%, rgba(255, 120, 200, 0.15), transparent 25%),
-        radial-gradient(circle at 50% 80%, rgba(120, 255, 220, 0.12), transparent 25%),
-        linear-gradient(180deg, #050814 0%, #060a18 40%, #03050d 100%);
+        radial-gradient(circle at 15% 20%, rgba(115, 130, 255, 0.16), transparent 22%),
+        radial-gradient(circle at 80% 18%, rgba(255, 120, 210, 0.12), transparent 22%),
+        radial-gradient(circle at 50% 75%, rgba(120, 255, 220, 0.10), transparent 25%),
+        linear-gradient(180deg, #040712 0%, #050913 40%, #02040b 100%);
       color: #fff;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 120px 180px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 240px 90px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 340px 240px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 80px 260px, rgba(255,255,255,0.5), transparent);
+      background-size: 400px 300px;
+      opacity: 0.22;
     }
 
     #app {
@@ -39,136 +52,157 @@
 
     .topbar {
       position: absolute;
-      top: 14px;
       left: 14px;
       right: 14px;
+      top: 14px;
+      z-index: 30;
       display: flex;
-      gap: 10px;
-      z-index: 20;
-      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       pointer-events: none;
     }
 
-    .topbar-inner {
+    .controls {
       display: flex;
       gap: 10px;
-      align-items: center;
-      pointer-events: auto;
       flex-wrap: wrap;
+      pointer-events: auto;
+      max-width: 70vw;
+    }
+
+    .search,
+    .select,
+    .btn {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(9, 14, 28, 0.78);
+      color: #fff;
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      font-size: 14px;
     }
 
     .search {
-      width: min(320px, 72vw);
+      width: min(330px, 72vw);
       padding: 12px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(10, 14, 28, 0.74);
-      color: #fff;
-      backdrop-filter: blur(10px);
       outline: none;
-      font-size: 15px;
     }
 
     .search::placeholder {
       color: rgba(255,255,255,0.55);
     }
 
+    .select {
+      padding: 12px 14px;
+      outline: none;
+    }
+
     .btn {
-      padding: 10px 14px;
-      border: none;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.1);
-      color: #fff;
+      padding: 12px 14px;
       cursor: pointer;
-      font-size: 14px;
-      backdrop-filter: blur(10px);
-      transition: 0.2s;
     }
 
     .btn:hover {
-      background: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.12);
     }
 
     .legend {
-      position: absolute;
-      right: 16px;
-      top: 16px;
-      width: 230px;
-      z-index: 20;
+      width: 240px;
       padding: 16px;
-      border-radius: 20px;
-      background: rgba(8, 12, 26, 0.78);
+      border-radius: 22px;
+      background: rgba(9, 14, 28, 0.82);
       border: 1px solid rgba(255,255,255,0.1);
       backdrop-filter: blur(12px);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 12px 48px rgba(0,0,0,0.34);
+      pointer-events: auto;
     }
 
-    .legend h3 {
-      margin: 0 0 12px;
-      font-size: 14px;
+    .legend-title {
+      font-size: 13px;
+      color: rgba(255,255,255,0.74);
       letter-spacing: 1px;
-      color: rgba(255,255,255,0.82);
+      margin-bottom: 10px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin: 10px 0;
+      margin: 9px 0;
       font-size: 14px;
       color: rgba(255,255,255,0.88);
     }
 
     .legend-dot {
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       border-radius: 50%;
-      box-shadow: 0 0 12px currentColor;
       flex-shrink: 0;
+      box-shadow: 0 0 14px currentColor;
     }
 
     .panel {
       position: absolute;
-      top: 84px;
       right: 16px;
+      top: 105px;
       bottom: 16px;
-      width: min(370px, calc(100vw - 32px));
-      z-index: 25;
-      padding: 18px;
-      border-radius: 22px;
-      background: rgba(8, 12, 26, 0.85);
+      width: min(390px, calc(100vw - 32px));
+      z-index: 40;
+      background: rgba(9, 14, 28, 0.88);
       border: 1px solid rgba(255,255,255,0.1);
       backdrop-filter: blur(14px);
-      box-shadow: 0 18px 60px rgba(0,0,0,0.42);
-      overflow-y: auto;
-      transform: translateX(0);
+      box-shadow: 0 16px 60px rgba(0,0,0,0.42);
+      border-radius: 24px;
+      overflow: hidden;
       transition: 0.28s ease;
     }
 
     .panel.hidden {
-      transform: translateX(calc(100% + 20px));
+      transform: translateX(calc(100% + 24px));
     }
 
-    .panel h2 {
-      margin: 0 0 8px;
+    .panel-scroll {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      padding: 18px;
+    }
+
+    .close-btn {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      z-index: 2;
+      font-size: 18px;
+    }
+
+    .title {
       font-size: 28px;
-      line-height: 1.15;
+      line-height: 1.12;
+      margin: 4px 42px 6px 0;
+      font-weight: 700;
     }
 
-    .en-name {
-      margin-bottom: 14px;
+    .subtitle {
+      color: rgba(255,255,255,0.58);
       font-size: 14px;
-      color: rgba(255,255,255,0.62);
+      margin-bottom: 12px;
     }
 
-    .tag {
+    .badge {
       display: inline-block;
-      margin-bottom: 14px;
       padding: 6px 10px;
       border-radius: 999px;
-      font-size: 12px;
       background: rgba(255,255,255,0.08);
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.86);
+      font-size: 12px;
+      margin-bottom: 14px;
     }
 
     .section {
@@ -178,13 +212,14 @@
     .section h4 {
       margin: 0 0 10px;
       font-size: 14px;
-      color: rgba(255,255,255,0.84);
+      color: rgba(255,255,255,0.9);
     }
 
-    .section p, .section li {
-      color: rgba(255,255,255,0.85);
-      line-height: 1.75;
+    .section p,
+    .section li {
       font-size: 14px;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.84);
     }
 
     .section ul {
@@ -192,72 +227,115 @@
       padding-left: 18px;
     }
 
-    .wiki-btn {
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: rgba(255,255,255,0.88);
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .chip:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .wiki-summary {
+      min-height: 60px;
+      white-space: pre-line;
+    }
+
+    .loading {
+      color: rgba(255,255,255,0.6);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .link-btn {
       display: inline-block;
-      margin-top: 14px;
+      text-decoration: none;
       padding: 12px 14px;
       border-radius: 14px;
-      text-decoration: none;
       color: #fff;
-      background: linear-gradient(135deg, rgba(92, 124, 255, 0.85), rgba(213, 108, 255, 0.85));
+      background: linear-gradient(135deg, rgba(90,120,255,0.88), rgba(211,96,255,0.88));
+      box-shadow: 0 10px 30px rgba(110,90,255,0.24);
       font-size: 14px;
-      box-shadow: 0 10px 30px rgba(112, 103, 255, 0.25);
+    }
+
+    .muted-btn {
+      display: inline-block;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+      font-size: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     .hint {
       position: absolute;
       left: 16px;
       bottom: 16px;
-      z-index: 10;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(8, 12, 26, 0.65);
+      z-index: 15;
+      background: rgba(9, 14, 28, 0.7);
       border: 1px solid rgba(255,255,255,0.08);
       backdrop-filter: blur(10px);
-      color: rgba(255,255,255,0.74);
+      color: rgba(255,255,255,0.72);
+      border-radius: 14px;
+      padding: 12px 14px;
       font-size: 13px;
     }
 
-    .empty {
-      color: rgba(255,255,255,0.72);
+    .welcome {
+      color: rgba(255,255,255,0.82);
       line-height: 1.8;
       font-size: 14px;
-      margin-top: 8px;
     }
 
-    .close-btn {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      border: none;
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 18px;
+    .empty-text {
+      color: rgba(255,255,255,0.64);
+      font-size: 14px;
+      line-height: 1.8;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls {
+        max-width: 100%;
+      }
+
       .legend {
-        width: 180px;
-        padding: 12px;
-        top: 70px;
+        width: 100%;
       }
 
       .panel {
-        top: auto;
-        right: 10px;
         left: 10px;
-        bottom: 10px;
+        right: 10px;
         width: auto;
-        max-height: 52vh;
+        top: auto;
+        bottom: 10px;
+        max-height: 56vh;
       }
 
       .hint {
-        right: 16px;
-        max-width: 72vw;
+        max-width: calc(100vw - 32px);
       }
     }
   </style>
@@ -265,47 +343,53 @@
 <body>
   <div id="app">
     <div class="topbar">
-      <div class="topbar-inner">
+      <div class="controls">
         <input id="searchInput" class="search" type="text" placeholder="搜索主义、哲学思想、人物…" />
-        <button class="btn" id="resetViewBtn">重置视图</button>
-        <button class="btn" id="randomBtn">随机看看</button>
+        <select id="categoryFilter" class="select">
+          <option value="全部">全部分类</option>
+          <option value="政治 / 社会思想">政治 / 社会思想</option>
+          <option value="认识论 / 方法论">认识论 / 方法论</option>
+          <option value="存在 / 本体 / 人生哲学">存在 / 本体 / 人生哲学</option>
+          <option value="伦理 / 实践哲学">伦理 / 实践哲学</option>
+          <option value="文化 / 批判理论">文化 / 批判理论</option>
+        </select>
+        <button id="resetBtn" class="btn">重置视图</button>
+        <button id="randomBtn" class="btn">随机思想</button>
       </div>
-    </div>
 
-    <div class="legend">
-      <h3>图例 LEGEND</h3>
-      <div class="legend-item">
-        <span class="legend-dot" style="color:#ffd59a;background:#ffd59a;"></span>
-        <span>政治 / 社会思想</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-dot" style="color:#a8d8ff;background:#a8d8ff;"></span>
-        <span>认识论 / 方法论</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-dot" style="color:#deb0ff;background:#deb0ff;"></span>
-        <span>存在 / 本体 / 人生哲学</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-dot" style="color:#a7ffbd;background:#a7ffbd;"></span>
-        <span>伦理 / 实践哲学</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-dot" style="color:#ffb3d5;background:#ffb3d5;"></span>
-        <span>文化 / 批判理论</span>
+      <div class="legend">
+        <div class="legend-title">PHILOSOPHY COSMOS</div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#ffd59a;color:#ffd59a;"></span>
+          <span>政治 / 社会思想</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#a8d8ff;color:#a8d8ff;"></span>
+          <span>认识论 / 方法论</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#deb0ff;color:#deb0ff;"></span>
+          <span>存在 / 本体 / 人生哲学</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#a7ffbd;color:#a7ffbd;"></span>
+          <span>伦理 / 实践哲学</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#ffb3d5;color:#ffb3d5;"></span>
+          <span>文化 / 批判理论</span>
+        </div>
       </div>
     </div>
 
     <div id="panel" class="panel hidden">
-      <button class="close-btn" id="closePanelBtn">×</button>
-      <div id="panelContent"></div>
+      <button id="closePanelBtn" class="close-btn">×</button>
+      <div class="panel-scroll" id="panelContent"></div>
     </div>
 
     <div id="network"></div>
 
-    <div class="hint">
-      拖动画布、双指缩放，点击任意光点查看详情
-    </div>
+    <div class="hint">拖动画布、双指缩放、点击节点查看详细资料</div>
   </div>
 
   <script>
@@ -317,11 +401,12 @@
         category: "政治 / 社会思想",
         color: "#ffd59a",
         size: 28,
-        wiki: "https://zh.wikipedia.org/wiki/%E8%87%AA%E7%94%B1%E4%B8%BB%E4%B9%89",
-        summary: "强调个人自由、权利、法治与有限政府，是近现代政治思想中影响极大的传统之一。",
-        figures: ["约翰·洛克", "约翰·斯图亚特·密尔", "孟德斯鸠"],
+        wikiTitle: "自由主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/自由主义",
+        summary: "强调个人自由、权利、法治与有限政府，是现代政治思想中极具影响力的传统。",
+        figures: ["约翰·洛克", "孟德斯鸠", "约翰·斯图亚特·密尔"],
         books: ["《政府论》", "《论自由》", "《法的精神》"],
-        related: ["保守主义", "社群主义", "功利主义"]
+        related: ["保守主义", "功利主义", "社群主义"]
       },
       {
         id: "conservatism",
@@ -330,10 +415,11 @@
         category: "政治 / 社会思想",
         color: "#ffd59a",
         size: 24,
-        wiki: "https://zh.wikipedia.org/wiki/%E4%BF%9D%E5%AE%88%E4%B8%BB%E4%B9%89",
-        summary: "强调传统、秩序、渐进改革与社会稳定，通常对激进变革持谨慎态度。",
+        wikiTitle: "保守主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/保守主义",
+        summary: "强调传统、秩序、经验与渐进改革，通常对剧烈社会变革持谨慎态度。",
         figures: ["埃德蒙·伯克", "迈克尔·奥克肖特"],
-        books: ["《法国革命论》", "《做保守主义者意味着什么》"],
+        books: ["《法国革命论》", "《保守主义的意义》"],
         related: ["自由主义", "民族主义"]
       },
       {
@@ -342,12 +428,13 @@
         english: "Marxism",
         category: "政治 / 社会思想",
         color: "#ffd59a",
-        size: 34,
-        wiki: "https://zh.wikipedia.org/wiki/%E9%A6%AC%E5%85%8B%E6%80%9D%E4%B8%BB%E7%BE%A9",
-        summary: "以历史唯物主义、阶级分析和资本主义批判为核心，对政治、经济与社会理论影响深远。",
-        figures: ["卡尔·马克思", "弗里德里希·恩格斯", "列宁"],
+        size: 35,
+        wikiTitle: "马克思主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/马克思主义",
+        summary: "以历史唯物主义、阶级分析与资本主义批判为核心，对政治、经济与社会理论影响深远。",
+        figures: ["马克思", "恩格斯", "列宁"],
         books: ["《资本论》", "《共产党宣言》", "《德意志意识形态》"],
-        related: ["社会主义", "无政府主义", "批判理论"]
+        related: ["社会主义", "批判理论", "无政府主义"]
       },
       {
         id: "socialism",
@@ -356,10 +443,11 @@
         category: "政治 / 社会思想",
         color: "#ffd59a",
         size: 26,
-        wiki: "https://zh.wikipedia.org/wiki/%E7%A4%BE%E4%BC%9A%E4%B8%BB%E4%B9%89",
-        summary: "强调社会平等、公共利益和对生产资料与资源分配方式的重新组织。",
+        wikiTitle: "社会主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/社会主义",
+        summary: "强调社会平等、公共利益与资源分配正义，是现代政治思想的重要传统之一。",
         figures: ["圣西门", "傅立叶", "欧文"],
-        books: ["《乌托邦》", "《社会主义：空想到科学的发展》"],
+        books: ["《社会主义：空想到科学的发展》", "《乌托邦》"],
         related: ["马克思主义", "无政府主义"]
       },
       {
@@ -369,8 +457,9 @@
         category: "政治 / 社会思想",
         color: "#ffd59a",
         size: 24,
-        wiki: "https://zh.wikipedia.org/wiki/%E7%84%A1%E6%94%BF%E5%BA%9C%E4%B8%BB%E7%BE%A9",
-        summary: "主张反对强制性统治与压迫性权威，追求更自由、自愿协作的社会形式。",
+        wikiTitle: "无政府主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/无政府主义",
+        summary: "反对强制性统治和压迫性权威，追求更加自由、自愿合作的社会组织形式。",
         figures: ["蒲鲁东", "巴枯宁", "克鲁泡特金"],
         books: ["《什么是所有权》", "《互助论》"],
         related: ["社会主义", "马克思主义"]
@@ -381,13 +470,29 @@
         english: "Nationalism",
         category: "政治 / 社会思想",
         color: "#ffd59a",
-        size: 23,
-        wiki: "https://zh.wikipedia.org/wiki/%E6%B0%91%E6%97%8F%E4%B8%BB%E4%B9%89",
-        summary: "强调民族共同体、身份认同与政治自决，在现代国家形成中具有重要影响。",
-        figures: ["马志尼", "赫尔德"],
+        size: 22,
+        wikiTitle: "民族主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/民族主义",
+        summary: "强调民族共同体、身份认同与政治自决，在现代国家建构中极具影响。",
+        figures: ["赫尔德", "马志尼"],
         books: ["《论德国民族》"],
         related: ["保守主义", "自由主义"]
       },
+      {
+        id: "communitarianism",
+        label: "社群主义",
+        english: "Communitarianism",
+        category: "政治 / 社会思想",
+        color: "#ffd59a",
+        size: 19,
+        wikiTitle: "社群主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/社群主义",
+        summary: "强调共同体、社会纽带和传统在构成个体身份与价值中的重要性。",
+        figures: ["迈克尔·桑德尔", "查尔斯·泰勒", "麦金太尔"],
+        books: ["《自由主义与正义的局限》", "《德性之后》"],
+        related: ["自由主义", "保守主义"]
+      },
+
       {
         id: "rationalism",
         label: "理性主义",
@@ -395,10 +500,11 @@
         category: "认识论 / 方法论",
         color: "#a8d8ff",
         size: 24,
-        wiki: "https://zh.wikipedia.org/wiki/%E7%90%86%E6%80%A7%E4%B8%BB%E7%BE%A9",
-        summary: "强调理性在知识获得中的核心作用，相信某些真理可通过思辨与演绎把握。",
+        wikiTitle: "理性主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/理性主义",
+        summary: "强调理性在知识获取中的核心作用，相信某些真理可借助思辨和演绎把握。",
         figures: ["笛卡尔", "斯宾诺莎", "莱布尼茨"],
-        books: ["《第一哲学沉思集》", "《伦理学》", "《人类理智新论》"],
+        books: ["《第一哲学沉思集》", "《伦理学》", "《单子论》"],
         related: ["经验主义", "实证主义"]
       },
       {
@@ -408,8 +514,9 @@
         category: "认识论 / 方法论",
         color: "#a8d8ff",
         size: 24,
-        wiki: "https://zh.wikipedia.org/wiki/%E7%B6%93%E9%A9%97%E4%B8%BB%E7%BE%A9",
-        summary: "主张知识主要来源于经验与感觉材料，对近代科学和认识论影响极大。",
+        wikiTitle: "经验主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/经验主义",
+        summary: "主张知识主要来源于经验与感觉材料，对近代科学与认识论影响很大。",
         figures: ["培根", "洛克", "休谟"],
         books: ["《新工具》", "《人类理解论》", "《人性论》"],
         related: ["理性主义", "实证主义"]
@@ -421,24 +528,55 @@
         category: "认识论 / 方法论",
         color: "#a8d8ff",
         size: 22,
-        wiki: "https://zh.wikipedia.org/wiki/%E5%AF%A6%E8%AD%89%E4%B8%BB%E7%BE%A9",
-        summary: "强调可观察、可验证的经验事实，反对形而上学式的空泛推论。",
+        wikiTitle: "实证主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/实证主义",
+        summary: "强调可观察、可验证的经验事实，反对空泛的形而上学推断。",
         figures: ["孔德", "密尔"],
         books: ["《实证哲学教程》", "《逻辑体系》"],
         related: ["经验主义", "逻辑实证主义"]
       },
+      {
+        id: "logical_positivism",
+        label: "逻辑实证主义",
+        english: "Logical Positivism",
+        category: "认识论 / 方法论",
+        color: "#a8d8ff",
+        size: 19,
+        wikiTitle: "逻辑实证主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/逻辑实证主义",
+        summary: "试图结合形式逻辑与经验验证原则，强调科学语言的清晰性与可检验性。",
+        figures: ["卡尔纳普", "艾耶尔", "石里克"],
+        books: ["《语言、真理与逻辑》"],
+        related: ["实证主义", "分析哲学"]
+      },
+      {
+        id: "analytic_philosophy",
+        label: "分析哲学",
+        english: "Analytic Philosophy",
+        category: "认识论 / 方法论",
+        color: "#a8d8ff",
+        size: 22,
+        wikiTitle: "分析哲学",
+        wikiUrl: "https://zh.wikipedia.org/wiki/分析哲学",
+        summary: "强调语言分析、论证清晰与概念精确，是20世纪英美哲学的主要传统之一。",
+        figures: ["罗素", "摩尔", "维特根斯坦"],
+        books: ["《逻辑哲学论》", "《哲学研究》"],
+        related: ["逻辑实证主义", "语言哲学"]
+      },
+
       {
         id: "phenomenology",
         label: "现象学",
         english: "Phenomenology",
         category: "存在 / 本体 / 人生哲学",
         color: "#deb0ff",
-        size: 26,
-        wiki: "https://zh.wikipedia.org/wiki/%E7%8F%BE%E8%B1%A1%E5%AD%B8",
-        summary: "试图回到经验如何呈现自身，分析意识、意向性与经验结构。",
-        figures: ["胡塞尔", "梅洛-庞蒂", "海德格尔"],
+        size: 27,
+        wikiTitle: "现象学",
+        wikiUrl: "https://zh.wikipedia.org/wiki/现象学",
+        summary: "试图回到经验本身，分析意识、意向性与世界如何向主体呈现。",
+        figures: ["胡塞尔", "海德格尔", "梅洛-庞蒂"],
         books: ["《逻辑研究》", "《纯粹现象学通论》", "《知觉现象学》"],
-        related: ["存在主义", "结构主义"]
+        related: ["存在主义", "解释学"]
       },
       {
         id: "existentialism",
@@ -446,9 +584,10 @@
         english: "Existentialism",
         category: "存在 / 本体 / 人生哲学",
         color: "#deb0ff",
-        size: 30,
-        wiki: "https://zh.wikipedia.org/wiki/%E5%AD%98%E5%9C%A8%E4%B8%BB%E7%BE%A9",
-        summary: "关注个体存在、自由选择、焦虑、责任与人生处境，强调人必须为自身存在负责。",
+        size: 31,
+        wikiTitle: "存在主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/存在主义",
+        summary: "关注个体存在、自由、焦虑、责任与人生处境，强调人必须为自己的选择负责。",
         figures: ["萨特", "加缪", "克尔凯郭尔", "海德格尔"],
         books: ["《存在与虚无》", "《局外人》", "《恐惧与战栗》"],
         related: ["现象学", "虚无主义", "人本主义"]
@@ -460,12 +599,42 @@
         category: "存在 / 本体 / 人生哲学",
         color: "#deb0ff",
         size: 21,
-        wiki: "https://zh.wikipedia.org/wiki/%E8%99%9B%E7%84%A1%E4%B8%BB%E7%BE%A9",
+        wikiTitle: "虚无主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/虚无主义",
         summary: "通常指对既有价值、意义、真理或道德基础的根本怀疑与否定。",
-        figures: ["尼采（常被关联讨论）", "屠格涅夫（传播该词语境）"],
+        figures: ["尼采（常被关联讨论）", "屠格涅夫"],
         books: ["《查拉图斯特拉如是说》", "《父与子》"],
         related: ["存在主义", "后现代主义"]
       },
+      {
+        id: "hermeneutics",
+        label: "解释学",
+        english: "Hermeneutics",
+        category: "存在 / 本体 / 人生哲学",
+        color: "#deb0ff",
+        size: 19,
+        wikiTitle: "解释学",
+        wikiUrl: "https://zh.wikipedia.org/wiki/解释学",
+        summary: "关注文本、历史与理解过程，强调理解总在特定语境中发生。",
+        figures: ["狄尔泰", "伽达默尔", "利科"],
+        books: ["《真理与方法》"],
+        related: ["现象学", "后现代主义"]
+      },
+      {
+        id: "absurdism",
+        label: "荒诞主义",
+        english: "Absurdism",
+        category: "存在 / 本体 / 人生哲学",
+        color: "#deb0ff",
+        size: 18,
+        wikiTitle: "荒诞主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/荒诞主义",
+        summary: "强调人对意义的追寻与世界冷漠沉默之间的张力，常与加缪相关。",
+        figures: ["加缪"],
+        books: ["《西西弗神话》", "《局外人》"],
+        related: ["存在主义", "虚无主义"]
+      },
+
       {
         id: "stoicism",
         label: "斯多葛主义",
@@ -473,11 +642,12 @@
         category: "伦理 / 实践哲学",
         color: "#a7ffbd",
         size: 24,
-        wiki: "https://zh.wikipedia.org/wiki/%E6%96%AF%E5%A4%9A%E8%91%9B%E5%AD%B8%E6%B4%BE",
-        summary: "强调理性、自制、德性和对不可控之事的平静接受，是一种强实践性的生活哲学。",
-        figures: ["芝诺", "爱比克泰德", "塞涅卡", "马可·奥勒留"],
-        books: ["《沉思录》", "《道德书简》", "《爱比克泰德论说集》"],
-        related: ["功利主义", "存在主义"]
+        wikiTitle: "斯多葛学派",
+        wikiUrl: "https://zh.wikipedia.org/wiki/斯多葛学派",
+        summary: "强调理性、自制、德性与对不可控事物的平静接受，是一种强实践性的生活哲学。",
+        figures: ["芝诺", "塞涅卡", "爱比克泰德", "马可·奥勒留"],
+        books: ["《沉思录》", "《道德书简》"],
+        related: ["犬儒主义", "功利主义"]
       },
       {
         id: "utilitarianism",
@@ -486,9 +656,10 @@
         category: "伦理 / 实践哲学",
         color: "#a7ffbd",
         size: 24,
-        wiki: "https://zh.wikipedia.org/wiki/%E5%8A%9F%E5%88%A9%E4%B8%BB%E7%BE%A9",
-        summary: "主张以最大多数人的最大幸福作为道德与公共决策的重要标准。",
-        figures: ["边沁", "约翰·斯图亚特·密尔"],
+        wikiTitle: "功利主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/功利主义",
+        summary: "以最大多数人的最大幸福作为判断行为与制度的一个核心标准。",
+        figures: ["边沁", "密尔"],
         books: ["《道德与立法原理导论》", "《功利主义》"],
         related: ["自由主义", "实证主义"]
       },
@@ -499,12 +670,42 @@
         category: "伦理 / 实践哲学",
         color: "#a7ffbd",
         size: 22,
-        wiki: "https://zh.wikipedia.org/wiki/%E4%BA%BA%E6%96%87%E4%B8%BB%E7%BE%A9",
-        summary: "强调人的价值、尊严、能动性与发展潜能，在文艺复兴、教育与心理学中影响广泛。",
+        wikiTitle: "人文主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/人文主义",
+        summary: "强调人的价值、尊严与自我实现潜能，在教育、文艺和心理学中影响广泛。",
         figures: ["伊拉斯谟", "马斯洛", "罗杰斯"],
         books: ["《论人的尊严》", "《动机与人格》"],
         related: ["存在主义", "自由主义"]
       },
+      {
+        id: "virtue_ethics",
+        label: "德性伦理学",
+        english: "Virtue Ethics",
+        category: "伦理 / 实践哲学",
+        color: "#a7ffbd",
+        size: 21,
+        wikiTitle: "德性伦理学",
+        wikiUrl: "https://zh.wikipedia.org/wiki/德性伦理学",
+        summary: "将道德重点放在人的品格与德性养成，而不只是规则或结果。",
+        figures: ["亚里士多德", "麦金太尔"],
+        books: ["《尼各马可伦理学》", "《德性之后》"],
+        related: ["斯多葛主义", "人本主义"]
+      },
+      {
+        id: "cynicism",
+        label: "犬儒主义",
+        english: "Cynicism",
+        category: "伦理 / 实践哲学",
+        color: "#a7ffbd",
+        size: 18,
+        wikiTitle: "犬儒學派",
+        wikiUrl: "https://zh.wikipedia.org/wiki/犬儒學派",
+        summary: "古典犬儒学派强调简朴生活、藐视虚伪习俗和回归自然；现代语境常另有贬义。",
+        figures: ["第欧根尼"],
+        books: ["《名哲言行录》（相关记载）"],
+        related: ["斯多葛主义"]
+      },
+
       {
         id: "structuralism",
         label: "结构主义",
@@ -512,11 +713,12 @@
         category: "文化 / 批判理论",
         color: "#ffb3d5",
         size: 23,
-        wiki: "https://zh.wikipedia.org/wiki/%E7%B5%90%E6%A7%8B%E4%B8%BB%E7%BE%A9",
-        summary: "强调语言、文化和思想背后的深层结构，试图揭示表象之下的规则系统。",
+        wikiTitle: "结构主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/结构主义",
+        summary: "强调语言、文化与思想背后的深层结构，试图揭示表象背后的规则系统。",
         figures: ["索绪尔", "列维-斯特劳斯", "拉康"],
-        books: ["《普通语言学教程》", "《野性的思维》", "《书写与差异》"],
-        related: ["后现代主义", "现象学", "解构主义"]
+        books: ["《普通语言学教程》", "《野性的思维》"],
+        related: ["后现代主义", "解构主义"]
       },
       {
         id: "postmodernism",
@@ -525,11 +727,12 @@
         category: "文化 / 批判理论",
         color: "#ffb3d5",
         size: 25,
-        wiki: "https://zh.wikipedia.org/wiki/%E5%BE%8C%E7%8F%BE%E4%BB%A3%E4%B8%BB%E7%BE%A9",
-        summary: "质疑宏大叙事、中心权威与单一真理，关注差异、多元与话语建构。",
+        wikiTitle: "后现代主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/后现代主义",
+        summary: "质疑宏大叙事、中心权威和单一真理，关注差异、多元与话语建构。",
         figures: ["利奥塔", "福柯", "鲍德里亚", "德里达"],
-        books: ["《后现代状况》", "《规训与惩罚》", "《论文字学》"],
-        related: ["结构主义", "虚无主义", "解构主义"]
+        books: ["《后现代状况》", "《规训与惩罚》", "《拟像与仿真》"],
+        related: ["结构主义", "解构主义", "虚无主义"]
       },
       {
         id: "deconstruction",
@@ -538,8 +741,9 @@
         category: "文化 / 批判理论",
         color: "#ffb3d5",
         size: 21,
-        wiki: "https://zh.wikipedia.org/wiki/%E8%A7%A3%E6%A7%8B%E4%B8%BB%E7%BE%A9",
-        summary: "通过细读文本揭示其内部张力、二元对立与意义的不稳定性。",
+        wikiTitle: "解构主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/解构主义",
+        summary: "通过细读文本揭示其中的张力、二元对立与意义的不稳定性。",
         figures: ["德里达"],
         books: ["《论文字学》", "《书写与差异》"],
         related: ["后现代主义", "结构主义"]
@@ -551,11 +755,26 @@
         category: "文化 / 批判理论",
         color: "#ffb3d5",
         size: 24,
-        wiki: "https://zh.wikipedia.org/wiki/%E6%89%B9%E5%88%A4%E7%90%86%E8%AE%BA",
+        wikiTitle: "批判理论",
+        wikiUrl: "https://zh.wikipedia.org/wiki/批判理论",
         summary: "关注权力、意识形态、资本主义社会结构与文化工业，对现代社会进行反思性批判。",
         figures: ["霍克海默", "阿多诺", "马尔库塞", "哈贝马斯"],
         books: ["《启蒙辩证法》", "《单向度的人》", "《交往行为理论》"],
         related: ["马克思主义", "后现代主义"]
+      },
+      {
+        id: "feminism",
+        label: "女性主义",
+        english: "Feminism",
+        category: "文化 / 批判理论",
+        color: "#ffb3d5",
+        size: 24,
+        wikiTitle: "女性主义",
+        wikiUrl: "https://zh.wikipedia.org/wiki/女性主义",
+        summary: "关注性别权力关系、平等权利与女性经验，是现代社会理论与实践中的重要传统。",
+        figures: ["西蒙娜·德·波伏娃", "朱迪斯·巴特勒", "贝蒂·弗里丹"],
+        books: ["《第二性》", "《性别麻烦》", "《女性的奥秘》"],
+        related: ["后现代主义", "批判理论", "存在主义"]
       }
     ];
 
@@ -563,65 +782,79 @@
       ["liberalism", "conservatism"],
       ["liberalism", "utilitarianism"],
       ["liberalism", "humanism"],
+      ["liberalism", "communitarianism"],
       ["conservatism", "nationalism"],
+      ["conservatism", "communitarianism"],
       ["marxism", "socialism"],
       ["marxism", "anarchism"],
       ["marxism", "critical_theory"],
       ["socialism", "anarchism"],
       ["rationalism", "empiricism"],
       ["empiricism", "positivism"],
-      ["positivism", "utilitarianism"],
+      ["positivism", "logical_positivism"],
+      ["logical_positivism", "analytic_philosophy"],
       ["phenomenology", "existentialism"],
+      ["phenomenology", "hermeneutics"],
       ["existentialism", "nihilism"],
+      ["existentialism", "absurdism"],
       ["existentialism", "humanism"],
-      ["stoicism", "utilitarianism"],
+      ["stoicism", "virtue_ethics"],
+      ["stoicism", "cynicism"],
+      ["utilitarianism", "liberalism"],
+      ["humanism", "virtue_ethics"],
       ["structuralism", "postmodernism"],
       ["structuralism", "deconstruction"],
       ["postmodernism", "deconstruction"],
       ["critical_theory", "postmodernism"],
-      ["phenomenology", "structuralism"]
+      ["feminism", "critical_theory"],
+      ["feminism", "existentialism"],
+      ["feminism", "postmodernism"]
     ];
 
-    const nodeData = ideas.map(item => ({
-      id: item.id,
-      label: item.label,
-      title: item.label,
-      value: item.size,
-      color: {
-        background: item.color,
-        border: item.color,
-        highlight: {
-          background: item.color,
-          border: "#ffffff"
-        },
-        hover: {
-          background: item.color,
-          border: "#ffffff"
-        }
-      },
-      font: {
-        color: "#ffffff",
-        size: 16,
-        face: "sans-serif",
-        strokeWidth: 0
-      },
-      shape: "dot",
-      shadow: {
-        enabled: true,
-        color: item.color,
-        size: 22,
-        x: 0,
-        y: 0
-      }
-    }));
+    let currentIdeas = [...ideas];
+    let currentSelectedId = null;
 
-    const edgeData = relationPairs.map(([from, to]) => ({
-      from,
-      to,
+    const originalNodeMap = new Map(
+      ideas.map(item => [
+        item.id,
+        {
+          id: item.id,
+          label: item.label,
+          title: item.label,
+          value: item.size,
+          shape: "dot",
+          color: {
+            background: item.color,
+            border: item.color,
+            highlight: { background: item.color, border: "#ffffff" },
+            hover: { background: item.color, border: "#ffffff" }
+          },
+          font: {
+            color: "#ffffff",
+            size: 15,
+            face: "sans-serif"
+          },
+          shadow: {
+            enabled: true,
+            color: item.color,
+            size: 24,
+            x: 0,
+            y: 0
+          }
+        }
+      ])
+    );
+
+    const nodeData = ideas.map(item => originalNodeMap.get(item.id));
+
+    const edgeData = relationPairs.map((pair, index) => ({
+      id: index + 1,
+      from: pair[0],
+      to: pair[1],
       color: {
-        color: "rgba(255,255,255,0.10)",
-        highlight: "rgba(255,255,255,0.35)",
-        hover: "rgba(255,255,255,0.25)"
+        color: "rgba(255,255,255,0.08)",
+        highlight: "rgba(255,255,255,0.34)",
+        hover: "rgba(255,255,255,0.24)"
       },
       width: 1,
       smooth: {
@@ -630,7 +863,6 @@
       }
     }));
 
-    const container = document.getElementById("network");
     const nodes = new vis.DataSet(nodeData);
     const edges = new vis.DataSet(edgeData);
 
@@ -640,55 +872,113 @@
       autoResize: true,
       interaction: {
         hover: true,
-        tooltipDelay: 120,
         zoomView: true,
         dragView: true,
-        navigationButtons: false
+        tooltipDelay: 100
       },
       physics: {
         enabled: true,
-        stabilization: {
-          iterations: 300
-        },
+        solver: "barnesHut",
+        stabilization: { iterations: 350 },
         barnesHut: {
-          gravitationalConstant: -1800,
+          gravitationalConstant: -2100,
           centralGravity: 0.12,
-          springLength: 150,
-          springConstant: 0.02,
-          damping: 0.9,
-          avoidOverlap: 0.4
+          springLength: 140,
+          springConstant: 0.022,
+          damping: 0.88,
+          avoidOverlap: 0.38
         }
       },
       nodes: {
         borderWidth: 0,
-        scaling: {
-          min: 10,
-          max: 36
-        }
+        scaling: { min: 10, max: 38 }
       },
       edges: {
         selectionWidth: 2
       }
     };
 
-    const network = new vis.Network(container, data, options);
+    const network = new vis.Network(document.getElementById("network"), data, options);
 
     const panel = document.getElementById("panel");
     const panelContent = document.getElementById("panelContent");
     const closePanelBtn = document.getElementById("closePanelBtn");
     const searchInput = document.getElementById("searchInput");
-    const resetViewBtn = document.getElementById("resetViewBtn");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const resetBtn = document.getElementById("resetBtn");
     const randomBtn = document.getElementById("randomBtn");
 
-    function renderPanel(item) {
+    function getIdeaById(id) {
+      return ideas.find(item => item.id === id);
+    }
+
+    function getIdeaByLabel(label) {
+      return ideas.find(item => item.label === label);
+    }
+
+    function renderWelcome() {
       panelContent.innerHTML = `
-        <h2>${item.label}</h2>
-        <div class="en-name">${item.english}</div>
-        <div class="tag">${item.category}</div>
+        <div class="title">思想宇宙图谱</div>
+        <div class="subtitle">Philosophy Cosmos</div>
+        <div class="badge">点击任意节点开始探索</div>
+
+        <div class="welcome">
+          每一个光点代表一种主义、流派或哲学思想。<br><br>
+          你可以：
+          <br>· 点击光点查看简介、代表人物、代表书籍
+          <br>· 读取维基百科摘要
+          <br>· 搜索某个思想或哲学家
+          <br>· 按类别筛选不同思想宇宙
+        </div>
+      `;
+      panel.classList.remove("hidden");
+    }
+
+    async function fetchWikiSummary(title) {
+      try {
+        const url = `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("wiki fetch failed");
+        }
+        const data = await response.json();
+        return {
+          extract: data.extract || "暂无维基摘要。",
+          thumbnail: data.thumbnail?.source || ""
+        };
+      } catch (error) {
+        return {
+          extract: "暂时无法自动加载维基摘要，你仍然可以点击下方按钮打开维基百科原文。",
+          thumbnail: ""
+        };
+      }
+    }
+
+    function renderRelatedChips(relatedNames) {
+      return `
+        <div class="chips">
+          ${relatedNames.map(name => `<span class="chip" data-related="${name}">${name}</span>`).join("")}
+        </div>
+      `;
+    }
+
+    async function renderIdeaPanel(item) {
+      currentSelectedId = item.id;
+      panel.classList.remove("hidden");
+
+      panelContent.innerHTML = `
+        <div class="title">${item.label}</div>
+        <div class="subtitle">${item.english}</div>
+        <div class="badge">${item.category}</div>
 
         <div class="section">
           <h4>简介</h4>
           <p>${item.summary}</p>
+        </div>
+
+        <div class="section">
+          <h4>维基百科摘要</h4>
+          <p class="wiki-summary loading">正在加载维基百科摘要…</p>
         </div>
 
         <div class="section">
@@ -707,101 +997,77 @@
 
         <div class="section">
           <h4>相关思想</h4>
-          <ul>
-            ${item.related.map(r => `<li>${r}</li>`).join("")}
-          </ul>
+          ${renderRelatedChips(item.related)}
         </div>
 
-        <a class="wiki-btn" href="${item.wiki}" target="_blank" rel="noopener noreferrer">
-          打开维基百科
-        </a>
-      `;
-
-      panel.classList.remove("hidden");
-    }
-
-    function showWelcomePanel() {
-      panelContent.innerHTML = `
-        <h2>思想宇宙图谱</h2>
-        <div class="en-name">Ideology & Philosophy Map</div>
-        <div class="tag">点击任意节点开始探索</div>
-
-        <div class="empty">
-          这里的每一个光点，代表一种主义或哲学思想。<br><br>
-          你可以：
-          <br>· 点击光点查看简介
-          <br>· 查看代表人物和书籍
-          <br>· 点击按钮跳转维基百科
-          <br>· 用搜索框快速定位某个思想
+        <div class="actions">
+          <a class="link-btn" href="${item.wikiUrl}" target="_blank" rel="noopener noreferrer">打开维基百科</a>
+          <a class="muted-btn" href="https://zh.wikipedia.org/wiki/${encodeURIComponent(item.wikiTitle)}" target="_blank" rel="noopener noreferrer">新窗口查看条目</a>
         </div>
       `;
-      panel.classList.remove("hidden");
+
+      const wikiSummaryEl = panelContent.querySelector(".wiki-summary");
+      const wikiData = await fetchWikiSummary(item.wikiTitle);
+
+      if (currentSelectedId === item.id && wikiSummaryEl) {
+        wikiSummaryEl.classList.remove("loading");
+        wikiSummaryEl.textContent = wikiData.extract;
+      }
+
+      bindRelatedChips();
     }
 
-    function openIdeaById(id) {
-      const item = ideas.find(x => x.id === id);
-      if (!item) return;
+    function bindRelatedChips() {
+      const chips = panelContent.querySelectorAll(".chip");
+      chips.forEach(chip => {
+        chip.addEventListener("click", () => {
+          const name = chip.getAttribute("data-related");
+          const found = getIdeaByLabel(name);
+          if (found) {
+            openIdea(found.id);
+          }
+        });
+      });
+    }
 
-      renderPanel(item);
-
-      network.selectNodes([id]);
-      network.focus(id, {
-        scale: 1.15,
-        animation: {
-          duration: 600,
-          easingFunction: "easeInOutQuad"
-        }
+    function resetNodeStyles() {
+      ideas.forEach(item => {
+        nodes.update({
+          ...originalNodeMap.get(item.id),
+          hidden: false
+        });
       });
 
-      highlightNeighborhood(id);
-    }
-
-    function clearHighlight() {
-      nodes.update(ideas.map(item => ({
-        id: item.id,
-        color: {
-          background: item.color,
-          border: item.color,
-          highlight: {
-            background: item.color,
-            border: "#ffffff"
-          },
-          hover: {
-            background: item.color,
-            border: "#ffffff"
+      edgeData.forEach(edge => {
+        edges.update({
+          id: edge.id,
+          hidden: false,
+          width: 1,
+          color: {
+            color: "rgba(255,255,255,0.08)",
+            highlight: "rgba(255,255,255,0.34)",
+            hover: "rgba(255,255,255,0.24)"
           }
-        },
-        font: { color: "#ffffff", size: 16 },
-        shadow: {
-          enabled: true,
-          color: item.color,
-          size: 22,
-          x: 0,
-          y: 0
-        }
-      })));
-
-      edges.update(edgeData.map((e, index) => ({
-        id: index + 1,
-        ...e
-      })));
+        });
+      });
     }
 
-    function highlightNeighborhood(selectedId) {
-      const connected = new Set(network.getConnectedNodes(selectedId));
-      connected.add(selectedId);
+    function highlightNeighborhood(id) {
+      const connectedNodes = new Set(network.getConnectedNodes(id));
+      connectedNodes.add(id);
+      const connectedEdges = new Set(network.getConnectedEdges(id));
 
-      nodes.update(ideas.map(item => {
-        const active = connected.has(item.id);
-        return {
+      ideas.forEach(item => {
+        const active = connectedNodes.has(item.id);
+        nodes.update({
           id: item.id,
           color: {
-            background: active ? item.color : "rgba(255,255,255,0.14)",
-            border: active ? item.color : "rgba(255,255,255,0.08)"
+            background: active ? item.color : "rgba(255,255,255,0.12)",
+            border: active ? item.color : "rgba(255,255,255,0.06)"
           },
           font: {
-            color: active ? "#ffffff" : "rgba(255,255,255,0.35)",
-            size: active ? 16 : 14
+            color: active ? "#ffffff" : "rgba(255,255,255,0.3)",
+            size: active ? 15 : 13
           },
           shadow: {
             enabled: active,
@@ -810,91 +1076,162 @@
             x: 0,
             y: 0
           }
-        };
-      }));
+        });
+      });
 
-      const connectedEdges = network.getConnectedEdges(selectedId);
-      edges.forEach(edge => {
-        const active = connectedEdges.includes(edge.id);
+      edgeData.forEach(edge => {
+        const active = connectedEdges.has(edge.id);
         edges.update({
           id: edge.id,
+          width: active ? 2 : 1,
           color: {
-            color: active ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.05)"
-          },
-          width: active ? 2 : 1
+            color: active ? "rgba(255,255,255,0.30)" : "rgba(255,255,255,0.04)"
+          }
         });
       });
     }
 
-    network.on("click", function(params) {
-      if (params.nodes.length > 0) {
-        openIdeaById(params.nodes[0]);
+    function openIdea(id) {
+      const item = getIdeaById(id);
+      if (!item) return;
+
+      currentSelectedId = id;
+      renderIdeaPanel(item);
+      network.selectNodes([id]);
+      network.focus(id, {
+        scale: 1.12,
+        animation: {
+          duration: 600,
+          easingFunction: "easeInOutQuad"
+        }
+      });
+      highlightNeighborhood(id);
+    }
+
+    function applyCategoryFilter() {
+      const value = categoryFilter.value;
+      resetNodeStyles();
+
+      if (value === "全部") {
+        ideas.forEach(item => nodes.update({ id: item.id, hidden: false }));
+        edgeData.forEach(edge => edges.update({ id: edge.id, hidden: false }));
+        currentIdeas = [...ideas];
       } else {
-        clearHighlight();
+        currentIdeas = ideas.filter(item => item.category === value);
+        const visibleIds = new Set(currentIdeas.map(item => item.id));
+
+        ideas.forEach(item => {
+          nodes.update({
+            id: item.id,
+            hidden: !visibleIds.has(item.id)
+          });
+        });
+
+        edgeData.forEach(edge => {
+          const visible = visibleIds.has(edge.from) && visibleIds.has(edge.to);
+          edges.update({
+            id: edge.id,
+            hidden: !visible
+          });
+        });
       }
-    });
 
-    closePanelBtn.addEventListener("click", () => {
-      panel.classList.add("hidden");
-      network.unselectAll();
-      clearHighlight();
-    });
-
-    resetViewBtn.addEventListener("click", () => {
       network.fit({
         animation: {
           duration: 700,
           easingFunction: "easeInOutQuad"
         }
       });
-      network.unselectAll();
-      clearHighlight();
-    });
+    }
 
-    randomBtn.addEventListener("click", () => {
-      const random = ideas[Math.floor(Math.random() * ideas.length)];
-      openIdeaById(random.id);
-    });
-
-    searchInput.addEventListener("keydown", (e) => {
-      if (e.key !== "Enter") return;
-
+    function searchIdea() {
       const keyword = searchInput.value.trim().toLowerCase();
       if (!keyword) return;
 
       const found = ideas.find(item =>
         item.label.toLowerCase().includes(keyword) ||
         item.english.toLowerCase().includes(keyword) ||
-        item.figures.some(name => name.toLowerCase().includes(keyword))
+        item.category.toLowerCase().includes(keyword) ||
+        item.figures.some(name => name.toLowerCase().includes(keyword)) ||
+        item.books.some(book => book.toLowerCase().includes(keyword))
       );
 
       if (found) {
-        openIdeaById(found.id);
+        categoryFilter.value = "全部";
+        applyCategoryFilter();
+        setTimeout(() => openIdea(found.id), 150);
       } else {
+        panel.classList.remove("hidden");
         panelContent.innerHTML = `
-          <h2>没有找到</h2>
-          <div class="en-name">Search Result</div>
-          <div class="empty">
-            没有搜到“${searchInput.value}”。<br><br>
-            你可以试试：
+          <div class="title">没有找到</div>
+          <div class="subtitle">Search Result</div>
+          <div class="empty-text">
+            没有搜到 “${searchInput.value}”。<br><br>
+            可以试试这些关键词：
             <br>· 存在主义
             <br>· 马克思主义
-            <br>· 自由主义
-            <br>· 斯多葛主义
+            <br>· 结构主义
+            <br>· 女性主义
+            <br>· 尼采
+            <br>· 《资本论》
           </div>
         `;
-        panel.classList.remove("hidden");
+      }
+    }
+
+    network.on("click", function(params) {
+      if (params.nodes.length > 0) {
+        openIdea(params.nodes[0]);
+      } else {
+        resetNodeStyles();
       }
     });
 
-    network.once("stabilizationIterationsDone", function () {
+    searchInput.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        searchIdea();
+      }
+    });
+
+    categoryFilter.addEventListener("change", applyCategoryFilter);
+
+    resetBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      categoryFilter.value = "全部";
+      currentSelectedId = null;
+      applyCategoryFilter();
+      resetNodeStyles();
+      network.unselectAll();
+      network.fit({
+        animation: {
+          duration: 800,
+          easingFunction: "easeInOutQuad"
+        }
+      });
+      renderWelcome();
+    });
+
+    randomBtn.addEventListener("click", () => {
+      const list = currentIdeas.length ? currentIdeas : ideas;
+      const random = list[Math.floor(Math.random() * list.length)];
+      openIdea(random.id);
+    });
+
+    closePanelBtn.addEventListener("click", () => {
+      panel.classList.add("hidden");
+      currentSelectedId = null;
+      network.unselectAll();
+      resetNodeStyles();
+    });
+
+    network.once("stabilizationIterationsDone", function() {
       network.fit({
         animation: {
           duration: 900,
           easingFunction: "easeInOutQuad"
         }
       });
-      showWelcomePanel();
+      renderWelcome();
     });
   </script>
 </body>
